@@ -1,6 +1,8 @@
 from io import open
 from collections import OrderedDict
 from Variable import *
+import pandas as pd
+import os
 
 
 def select_flavor(input_file):
@@ -26,6 +28,9 @@ def select_flavor(input_file):
                     else:
                         if colums[1] == "flavor" + str(i + 1):
                             count[date] = count[date] + 1
+
+                save_as_csv(count, "flavor" + str(i + 1))
+
                 for key, value in count.items():
                     # print ' '.join([key, str(value)])
                     outfile.write(' '.join([key, str(value)]) + '\n')
@@ -33,6 +38,28 @@ def select_flavor(input_file):
 def date_change(date):
     [year, month, day] = date.split('-')
     return year + '-' + month + '-' + str(int(day))
+
+def save_as_csv(dictionary, flavor):
+    if os.path.exists('data/csv/' + flavor):
+        # print 'a'
+        read = pd.read_csv('data/csv/' + flavor)
+        date = dictionary.keys()
+        count = dictionary.values()
+        # date_column = pd.Series(date, name = 'date')
+        # count_column = pd.Series(count, name = 'count')
+        # combination =  pd.concat([date_column, count_column], axis = 1)
+        save = pd.DataFrame({'date': date, 'count': count})
+        combination = read.append(save, ignore_index = False)
+        combination.to_csv('data/csv/' + flavor, index = False, encoding = 'utf-8')
+
+    else:
+        date = dictionary.keys()
+        count = dictionary.values()
+        # date_column = pd.Series(date, name = 'date')
+        # count_column = pd.Series(count, name = 'count')
+        # combination =  pd.concat([date_column, count_column], axis = 1)
+        save = pd.DataFrame({'date' : date, 'count' : count})
+        save.to_csv('data/csv/' + flavor, index = False, encoding = 'utf-8')
 
 select_flavor("data/raw/data_2015_1.txt")
 select_flavor("data/raw/data_2015_2.txt")
