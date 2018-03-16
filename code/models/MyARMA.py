@@ -63,7 +63,7 @@ def best_diff(df, maxdiff = 8):
 
 if __name__ == '__main__':
     #file_input = pd.read_csv('/home/qiujiawei/huaweiruantiao/code/data/csv/flavor1', encoding='utf-8', index_col='date')
-    file_input = pd.read_csv('data/csv/flavor8', encoding='utf-8', index_col='date')
+    file_input = pd.read_csv('data/csv/flavor8_test', encoding='utf-8', index_col='date')
     file_input.index = pd.to_datetime(file_input.index)
     # pd.show_versions()
     # np.show_config()
@@ -93,29 +93,32 @@ if __name__ == '__main__':
     predict_week = [None]
     predict_week = arma.predict[0]
     test_data = test_data.values
-    
+    rol_mean = rol_mean.values
     week = [None]*7
-    week[0] = (predict_week[0]+test_data[-1:])*7-sum(test_data[-6:]) 
+    #print week[:2]
+    
+    week[0] = (predict_week[0]+rol_mean[-1])*7-sum(test_data[-6:]) 
     if week[0] < 0:
         week[0] = 0
-    week[1] = (predict_week[1]+week[0])*7-(sum(test_data[-5:])+sum(week[:1])) 
+    week[1] = (predict_week[1]+(sum(test_data[-6:])+sum(week[:1]))/7)*7-(sum(test_data[-5:])+sum(week[:1])) 
     if week[1] < 0:
         week[1] = 0
-    week[2] = (predict_week[2]+week[1])*7-(sum(test_data[-4:])+sum(week[:2])) 
+    week[2] = (predict_week[2]+(sum(test_data[-5:])+sum(week[:2]))/7)*7-(sum(test_data[-4:])+sum(week[:2])) 
     if week[2] < 0:
         week[2] = 0
-    week[3] = (predict_week[3]+week[2])*7-(sum(test_data[-3:])+sum(week[:3])) 
+    week[3] = (predict_week[3]+(sum(test_data[-4:])+sum(week[:3]))/7)*7-(sum(test_data[-3:])+sum(week[:3])) 
     if week[3] < 0:
         week[3] = 0
-    week[4] = (predict_week[4]+week[3])*7-(sum(test_data[-2:])+sum(week[:4])) 
+    week[4] = (predict_week[4]+(sum(test_data[-3:])+sum(week[:4]))/7)*7-(sum(test_data[-2:])+sum(week[:4])) 
     if week[4] < 0:
         week[4] = 0
-    week[5] = (predict_week[5]+week[4])*7-(sum(test_data[-1:])+sum(week[:5])) 
+    week[5] = (predict_week[5]+(sum(test_data[-2:])+sum(week[:5]))/7)*7-(sum(test_data[-1:])+sum(week[:5])) 
     if week[5] < 0:
         week[5] = 0
-    week[6] = (predict_week[6]+week[5])*7-(sum(week[:6])) 
+    week[6] = (predict_week[6]+(sum(test_data[-1:])+sum(week[:6]))/7)*7-(sum(week[:6])) 
     if week[6] < 0:
         week[6] = 0
-    print week
+    print sum(week)
+    
 
 
