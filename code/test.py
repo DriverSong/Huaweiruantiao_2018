@@ -105,13 +105,18 @@ class arima_model:
 
 if __name__ == '__main__':
     df = pd.read_csv('data/csv/flavor1', encoding='utf-8', index_col='date')
+    print df.index
     df.index = pd.to_datetime(df.index)
+    print df.index
+    print pd.to_datetime()
+    print (df.index[1] - df.index[0]).days
     ts = df['count']
-    print(ts)
+    # print(ts)
 
     # 数据预处理
     # ts_log = np.log(ts)
-    rol_mean = ts.rolling(window=12).mean()
+    # rol_mean = ts.rolling(window=12).mean()
+    rol_mean = ts.rolling(window=7).mean()
     # rol_mean = ts_log.rolling(window=12).mean()
     rol_mean.dropna(inplace=True)
     ts_diff_1 = rol_mean.diff(1)
@@ -133,8 +138,10 @@ if __name__ == '__main__':
     diff_recover_1 = predict_ts.add(diff_shift_ts)
     rol_shift_ts = rol_mean.shift(1)
     diff_recover = diff_recover_1.add(rol_shift_ts)
-    rol_sum = ts.rolling(window=11).sum()
-    rol_recover = diff_recover*12 - rol_sum.shift(1)
+    # rol_sum = ts.rolling(window=11).sum()
+    rol_sum = ts.rolling(window=6).sum()
+    # rol_recover = diff_recover*12 - rol_sum.shift(1)
+    rol_recover = diff_recover*7 - rol_sum.shift(1)
     # log_recover = np.exp(rol_recover)
     # log_recover.dropna(inplace=True)
     rol_recover.dropna(inplace=True)
