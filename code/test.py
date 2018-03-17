@@ -107,15 +107,11 @@ if __name__ == '__main__':
     df = pd.read_csv('data/csv/flavor8', encoding='utf-8', index_col='date')
     #print df.index
     df.index = pd.to_datetime(df.index)
-<<<<<<< HEAD
-    print df.index
-    # print pd.to_datetime()
-    print (df.index[1] - df.index[0]).days
-=======
+
     #print df.index
     #print pd.to_datetime()
     #print (df.index[1] - df.index[0]).days
->>>>>>> 3e8e2e2764329c809cada6730fdc8709bccbb178
+
     ts = df['count']
     # print(ts)
 
