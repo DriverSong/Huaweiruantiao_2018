@@ -187,8 +187,12 @@ def predict_all():
         #diff_i             ----    [roll_mean,diff_1,diff_2,....]
 
         # print sum(predict_data)
-        result_compare[i + 1] = [sum(raw_data.values), sum([j if j > 0 else 0 for j in predict_data])]
+        result_compare[i + 1] = [sum(raw_data.values), int(sum([j if j > 0 else 0 for j in predict_data]) + 0.5)]
+    score = 1 - np.sqrt(sum([np.square(i[0] - i[1]) for i in result_compare.values()])/len(result_compare))/\
+            (np.sqrt(sum([np.square(i[0]) for i in result_compare.values()])/len(result_compare)) +
+             np.sqrt(sum([np.square(i[1]) for i in result_compare.values()])/len(result_compare)))
     print result_compare
+    print 'score: ', score
         # print sum(raw_data.values)
         # print sum([i if i > 0 else 0 for i in predict_data])
 
