@@ -108,7 +108,7 @@ if __name__ == '__main__':
     print df.index
     df.index = pd.to_datetime(df.index)
     print df.index
-    print pd.to_datetime()
+    # print pd.to_datetime()
     print (df.index[1] - df.index[0]).days
     ts = df['count']
     # print(ts)
