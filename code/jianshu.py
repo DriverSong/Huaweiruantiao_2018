@@ -6,6 +6,10 @@ import sys
 from dateutil.relativedelta import relativedelta
 from copy import deepcopy
 import matplotlib.pyplot as plt
+from statsmodels.graphics.tsaplots import plot_acf
+from statsmodels.graphics.tsaplots import plot_pacf
+from statsmodels.stats.diagnostic import acorr_ljungbox
+from statsmodels.tsa.stattools import adfuller
 
 class arima_model:
 
@@ -103,29 +107,70 @@ class arima_model:
             raise ValueError('You must use the forecast_next_day_value method forecast the value of today before')
         self._add_new_data(self.resid_ts, self.data_ts[-1] - self.predict_ts[-1], type)
 
+#定义零均值测试函数
+def test_mean_noise_acf_pacf(timeseries):
+    mu=timeseries.mean()
+    std=timeseries.std()
+    print u'均值 =',mu
+    print u'方差 =',std
+    if mu >= -2*std and mu <= 2*std:
+        print '零均值检验结果：均值显著为0.'
+    else:
+        print '零均值检验结果：均值不显著为0.'
+
+    noiseRes = acorr_ljungbox(timeseries, lags=1)
+    print u'一阶差分序列的白噪声检验结果为：'
+    print 'stat                  | p-value'
+    for x in noiseRes:
+        print x,'|', 
+    plot_acf(timeseries).show()
+    plot_pacf(timeseries).show()
+    #plt.show()
+
+def test_stationarity(timeseries):
+    
+    #Determing rolling statistics
+    #计算移动平均，窗口大小为7
+    rolmean = pd.rolling_mean(timeseries, window=7)
+    #计算移动标准差，窗口大小为7
+    rolstd = pd.rolling_std(timeseries, window=7)
+
+    """
+    #Plot rolling statistics:
+    orig = plt.plot(timeseries, color='blue',label='Original')
+    mean = plt.plot(rolmean, color='red', label='Rolling Mean')
+    std = plt.plot(rolstd, color='black', label = 'Rolling Std')
+    plt.legend(loc='best')
+    plt.title('Rolling Mean & Standard Deviation')
+    plt.show(block=False)
+    """
+
+    #Perform Dickey-Fuller test:
+    print 'Results of Dickey-Fuller Test:'
+    dftest = adfuller(timeseries, autolag='AIC')
+    dfoutput = pd.Series(dftest[0:4], index=['Test Statistic','p-value','#Lags Used','Number of Observations Used'])
+    for key,value in dftest[4].items():
+        dfoutput['Critical Value (%s)'%key] = value
+    print dfoutput
 if __name__ == '__main__':
     df = pd.read_csv('data/csv/flavor8', encoding='utf-8', index_col='date')
     df.index = pd.to_datetime(df.index)
     ts = df['count']
     # 数据预处理
     # ts_log = np.log(ts)
-    # 移动窗口函数，每隔7天做一次平均平滑
     rol_mean = ts.rolling(window=7).mean()
     # rol_mean = ts_log.rolling(window=12).mean()
-    # 滤除缺失数据
     rol_mean.dropna(inplace=True)
-    rol_mean.replace(0,1,inplace=True)
-    ts_rol_mean = np.log(rol_mean)
-    ts_diff_1 = ts_rol_mean.diff(1)
-    #print(ts_diff_1)
+    ts_diff_1 = rol_mean.diff(2)
     ts_diff_1.dropna(inplace=True)
     ts_diff_2 = ts_diff_1.diff(1)
     ts_diff_2.dropna(inplace=True)
-    print(ts)
-    #ts.plot()
-    #ts_diff_1.plot()
-    #ts_log.plot()
-    plt.show()
+    ts_diff_3 = ts_diff_2.diff(1)
+    ts_diff_3.dropna(inplace=True)
+    ts_diff_4 = ts_diff_3.diff(1)
+    ts_diff_4.dropna(inplace=True)
+    test_stationarity(ts_diff_1)
+    test_mean_noise_acf_pacf(ts_diff_1)  
 """
     # 模型拟合
     model = arima_model(ts_diff_1)

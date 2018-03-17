@@ -95,29 +95,41 @@ if __name__ == '__main__':
     test_data = test_data.values
     rol_mean = rol_mean.values
     week = [None]*7
-    #print week[:2]
-    
-    week[0] = (predict_week[0]+rol_mean[-1])*7-sum(test_data[-6:]) 
+    #print sum(test_data[-7:]/float(7))
+    print ts_diff
+    #print test_data[-7:]
+    #print predict_week
+    """
+    week[0] = (predict_week[0]+sum(test_data[-7:]/float(7)))*7-sum(test_data[-6:]) 
     if week[0] < 0:
         week[0] = 0
-    week[1] = (predict_week[1]+(sum(test_data[-6:])+sum(week[:1]))/7)*7-(sum(test_data[-5:])+sum(week[:1])) 
+    week[1] = (predict_week[1]+(sum(test_data[-6:])+sum(week[:1]))/float(7))*7-(sum(test_data[-5:])+sum(week[:1])) 
     if week[1] < 0:
         week[1] = 0
-    week[2] = (predict_week[2]+(sum(test_data[-5:])+sum(week[:2]))/7)*7-(sum(test_data[-4:])+sum(week[:2])) 
+    week[2] = (predict_week[2]+(sum(test_data[-5:])+sum(week[:2]))/float(7))*7-(sum(test_data[-4:])+sum(week[:2])) 
     if week[2] < 0:
         week[2] = 0
-    week[3] = (predict_week[3]+(sum(test_data[-4:])+sum(week[:3]))/7)*7-(sum(test_data[-3:])+sum(week[:3])) 
+    week[3] = (predict_week[3]+(sum(test_data[-4:])+sum(week[:3]))/float(7))*7-(sum(test_data[-3:])+sum(week[:3])) 
     if week[3] < 0:
         week[3] = 0
-    week[4] = (predict_week[4]+(sum(test_data[-3:])+sum(week[:4]))/7)*7-(sum(test_data[-2:])+sum(week[:4])) 
+    week[4] = (predict_week[4]+(sum(test_data[-3:])+sum(week[:4]))/float(7))*7-(sum(test_data[-2:])+sum(week[:4])) 
     if week[4] < 0:
         week[4] = 0
-    week[5] = (predict_week[5]+(sum(test_data[-2:])+sum(week[:5]))/7)*7-(sum(test_data[-1:])+sum(week[:5])) 
+    week[5] = (predict_week[5]+(sum(test_data[-2:])+sum(week[:5]))/float(7))*7-(sum(test_data[-1:])+sum(week[:5])) 
     if week[5] < 0:
         week[5] = 0
-    week[6] = (predict_week[6]+(sum(test_data[-1:])+sum(week[:6]))/7)*7-(sum(week[:6])) 
+    week[6] = (predict_week[6]+(sum(test_data[-1:])+sum(week[:6]))/float(7))*7-(sum(week[:6])) 
     if week[6] < 0:
         week[6] = 0
+    """
+    for i in range(6):
+        week[i] = (predict_week[i]+(sum(test_data[i-7:])+sum(week[:i]))/float(7))*7-(sum(test_data[i-6:])+sum(week[:i])) 
+        if week[i] < 0:
+            week[i] = 0
+    week[6] = (predict_week[6]+(sum(test_data[-1:])+sum(week[:6]))/float(7))*7-(sum(week[:6])) 
+    if week[6] < 0:
+        week[6] = 0
+    print week
     print sum(week)
     
 
