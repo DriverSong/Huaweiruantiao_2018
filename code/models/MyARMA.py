@@ -53,13 +53,13 @@ def best_diff(df, maxdiff = 8):
             temp_df = df.diff(i)
             temp_df.dropna(inplace=True)
             diff_size = i
-        print adfuller(temp_df.values)
+        # print adfuller(temp_df.values)
         p_value = adfuller(temp_df.values)[1]
-        print '---------'
-        print p_value
+        # print '---------'
+        # print p_value
         if p_value < 0.01:
             break
-    # print 'diff_size: ', diff_size
+    print 'diff_size: ', diff_size
     return temp_df, diff_size
 
 def data_recover(raw_data, roll_mean, df_diff_roll, diff_size, roll_size):
@@ -98,19 +98,19 @@ def preprocessing(test_data, roll_size, start, end, diff_flag):
     # 移动平均
     roll_mean = test_data1.rolling(window=roll_size).mean()
     roll_mean.dropna(inplace=True)
-    print 'roll_mean:', roll_mean.values
+    # print 'roll_mean:', roll_mean.values
 
     # 差分
     ts_diff = roll_mean
     diff_size = 0
     if diff_flag == 1:
         ts_diff, diff_size = best_diff(roll_mean)
-    print 'diff:', ts_diff.values
+    # print 'diff:', ts_diff.values
 
     return test_data1, raw_data, roll_mean, ts_diff, diff_size, predict_size
 
 if __name__ == '__main__':
-    file_input = pd.read_csv('/home/qiujiawei/huaweiruantiao/code/data/csv/flavor15', encoding='utf-8', index_col='date')
+    file_input = pd.read_csv('/home/qiujiawei/huaweiruantiao/code/data/csv/flavor1', encoding='utf-8', index_col='date')
     file_input.index = pd.to_datetime(file_input.index)
     # pd.show_versions()
     # np.show_config()
@@ -118,7 +118,7 @@ if __name__ == '__main__':
 
     start = '2015-05-25'
     end = '2015-05-31'
-    roll_size = 6
+    roll_size = 7
     diff_flag = 1
 
     test_data1, raw_data, roll_mean, ts_diff, diff_size, predict_size = preprocessing(test_data, roll_size, start, end, diff_flag)
