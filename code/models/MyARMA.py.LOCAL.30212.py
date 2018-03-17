@@ -135,5 +135,3 @@ if __name__ == '__main__':
     # print sum(predict_data)
     # print sum([i if i > 0 else 0 for i in predict_data])
 
-
-

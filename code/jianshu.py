@@ -105,31 +105,28 @@ class arima_model:
 
 if __name__ == '__main__':
     df = pd.read_csv('data/csv/flavor8', encoding='utf-8', index_col='date')
-    #print df.index
     df.index = pd.to_datetime(df.index)
-<<<<<<< HEAD
-    print df.index
-    # print pd.to_datetime()
-    print (df.index[1] - df.index[0]).days
-=======
-    #print df.index
-    #print pd.to_datetime()
-    #print (df.index[1] - df.index[0]).days
->>>>>>> 3e8e2e2764329c809cada6730fdc8709bccbb178
     ts = df['count']
-    # print(ts)
-
     # 数据预处理
     # ts_log = np.log(ts)
-    # rol_mean = ts.rolling(window=12).mean()
+    # 移动窗口函数，每隔7天做一次平均平滑
     rol_mean = ts.rolling(window=7).mean()
     # rol_mean = ts_log.rolling(window=12).mean()
+    # 滤除缺失数据
     rol_mean.dropna(inplace=True)
-    ts_diff_1 = rol_mean.diff(1)
+    rol_mean.replace(0,1,inplace=True)
+    ts_rol_mean = np.log(rol_mean)
+    ts_diff_1 = ts_rol_mean.diff(1)
+    #print(ts_diff_1)
     ts_diff_1.dropna(inplace=True)
     ts_diff_2 = ts_diff_1.diff(1)
     ts_diff_2.dropna(inplace=True)
-
+    print(ts)
+    #ts.plot()
+    #ts_diff_1.plot()
+    #ts_log.plot()
+    plt.show()
+"""
     # 模型拟合
     model = arima_model(ts_diff_1)
     #  这里使用模型参数自动识别
@@ -144,9 +141,7 @@ if __name__ == '__main__':
     diff_recover_1 = predict_ts.add(diff_shift_ts)
     rol_shift_ts = rol_mean.shift(1)
     diff_recover = diff_recover_1.add(rol_shift_ts)
-    # rol_sum = ts.rolling(window=11).sum()
     rol_sum = ts.rolling(window=6).sum()
-    # rol_recover = diff_recover*12 - rol_sum.shift(1)
     rol_recover = diff_recover*7 - rol_sum.shift(1)
     # log_recover = np.exp(rol_recover)
     # log_recover.dropna(inplace=True)
@@ -163,3 +158,4 @@ if __name__ == '__main__':
     # plt.title('RMSE: %.4f'% np.sqrt(sum((log_recover-ts)**2)/ts.size))
     plt.title('RMSE: %.4f'% np.sqrt(sum((rol_recover-ts)**2)/ts.size))
     plt.show()
+"""

@@ -59,6 +59,7 @@ def best_diff(df, maxdiff = 8):
         print p_value
         if p_value < 0.01:
             break
+<<<<<<< HEAD
     # print 'diff_size: ', diff_size
     return temp_df, diff_size
 
@@ -111,6 +112,14 @@ def preprocessing(test_data, roll_size, start, end, diff_flag):
 
 if __name__ == '__main__':
     file_input = pd.read_csv('/home/qiujiawei/huaweiruantiao/code/data/csv/flavor15', encoding='utf-8', index_col='date')
+=======
+    #print i   
+    return temp_df, i
+
+if __name__ == '__main__':
+    #file_input = pd.read_csv('/home/qiujiawei/huaweiruantiao/code/data/csv/flavor1', encoding='utf-8', index_col='date')
+    file_input = pd.read_csv('data/csv/flavor8_test', encoding='utf-8', index_col='date')
+>>>>>>> 3e8e2e2764329c809cada6730fdc8709bccbb178
     file_input.index = pd.to_datetime(file_input.index)
     # pd.show_versions()
     # np.show_config()
@@ -126,6 +135,7 @@ if __name__ == '__main__':
     # delt = datetime.timedelta(7)
     arma = myarma(ts_diff, 8, start, end)
     arma.find_best_model()
+<<<<<<< HEAD
     print '预测复原前：', arma.predict[0]
     predict_data = data_recover(test_data1, roll_mean, arma.predict[0], diff_size, roll_size)
     # predict_data = data_recover(test_data[0 : -predict_size], roll_mean, arma.predict[0], diff_size, roll_size)
@@ -134,6 +144,37 @@ if __name__ == '__main__':
 
     # print sum(predict_data)
     # print sum([i if i > 0 else 0 for i in predict_data])
+=======
+    predict_week = [None]
+    predict_week = arma.predict[0]
+    test_data = test_data.values
+    rol_mean = rol_mean.values
+    week = [None]*7
+    #print week[:2]
+    
+    week[0] = (predict_week[0]+rol_mean[-1])*7-sum(test_data[-6:]) 
+    if week[0] < 0:
+        week[0] = 0
+    week[1] = (predict_week[1]+(sum(test_data[-6:])+sum(week[:1]))/7)*7-(sum(test_data[-5:])+sum(week[:1])) 
+    if week[1] < 0:
+        week[1] = 0
+    week[2] = (predict_week[2]+(sum(test_data[-5:])+sum(week[:2]))/7)*7-(sum(test_data[-4:])+sum(week[:2])) 
+    if week[2] < 0:
+        week[2] = 0
+    week[3] = (predict_week[3]+(sum(test_data[-4:])+sum(week[:3]))/7)*7-(sum(test_data[-3:])+sum(week[:3])) 
+    if week[3] < 0:
+        week[3] = 0
+    week[4] = (predict_week[4]+(sum(test_data[-3:])+sum(week[:4]))/7)*7-(sum(test_data[-2:])+sum(week[:4])) 
+    if week[4] < 0:
+        week[4] = 0
+    week[5] = (predict_week[5]+(sum(test_data[-2:])+sum(week[:5]))/7)*7-(sum(test_data[-1:])+sum(week[:5])) 
+    if week[5] < 0:
+        week[5] = 0
+    week[6] = (predict_week[6]+(sum(test_data[-1:])+sum(week[:6]))/7)*7-(sum(week[:6])) 
+    if week[6] < 0:
+        week[6] = 0
+    print sum(week)
+    
 
-
+>>>>>>> 3e8e2e2764329c809cada6730fdc8709bccbb178
 
