@@ -39,8 +39,8 @@ class myarma:
                     self.properModel = results_ARMA
                     self.bic = bic
                     self.resid = deepcopy(self.properModel.resid)
-                    # self.predict = deepcopy(self.properModel.forecast((self.end - self.start).days + 1))
-                    self.predict = [deepcopy(self.properModel.predict(start = self.start, end = self.end, dynamic = True))]
+                    self.predict = deepcopy(self.properModel.forecast((self.end - self.start).days + 1))
+                    # self.predict = [deepcopy(self.properModel.predict(start = self.start, end = self.end, dynamic = True))]
 
     def model_by_hand(self, p, q):
         self.p = p
@@ -50,8 +50,8 @@ class myarma:
         self.properModel = results_ARMA
         self.bic = results_ARMA.bic
         self.resid = deepcopy(self.properModel.resid)
-        # self.predict = deepcopy(self.properModel.forecast((self.end - self.start).days + 1))
-        self.predict = [deepcopy(self.properModel.predict(start=self.start, end=self.end, dynamic=True))]
+        self.predict = deepcopy(self.properModel.forecast((self.end - self.start).days + 1))
+        # self.predict = [deepcopy(self.properModel.predict(start=self.start, end=self.end, dynamic=True))]
 
 class my_diff:
     def __init__(self, df):
@@ -73,7 +73,7 @@ class my_diff:
             p_value = adfuller(temp_df.values)[1]
             if p_value < 0.01:
                 break
-        print 'diff_size: ', len(self.diff_i)
+        # print 'diff_size: ', len(self.diff_i) - 1
 
     def diff_by_hand(self ,diff_size):
         temp_df = self.df
@@ -154,6 +154,7 @@ def predict_all():
         # pd.show_versions()
         # np.show_config()
         test_data = file_input['count']
+        # test_data = np.log(test_data)
 
         start = '2015-05-25'
         end = '2015-05-31'
@@ -166,10 +167,13 @@ def predict_all():
         #               ----    == 0 p=0, q=7
 
         test_data1, raw_data, diff_i = preprocessing(test_data, roll_size, start, end, diff_flag)
+        predict_size = len(raw_data)
         # test_data1 ----    训练用数据集
         # raw_data   ----    预测原始数据
         # diff_i    ----    [roll_mean,diff_1,diff_2,....]
         # predict_size ----      预测天数
+
+
 
 
         # 模型预测
@@ -178,6 +182,9 @@ def predict_all():
             arma.find_best_model()
         else:
             arma.model_by_hand(0, 7)
+        print i + 1
+        print 'diff_size: ', len(diff_i) - 1
+        print 'p :',arma.p, ', q:', arma.q
 
 
         predict_data = data_recover(arma.predict[0], test_data1 , roll_size, diff_i)
@@ -186,8 +193,22 @@ def predict_all():
         #roll_size          ----    移位平均阶数
         #diff_i             ----    [roll_mean,diff_1,diff_2,....]
 
+        # print 'exp前：'
+        # print predict_data
+        # print raw_data
+        # print '-----'
+        #
+        # predict_data = np.exp(predict_data)
+        # raw_data = np.exp(raw_data)
+        #
+        # print 'exp后：'
+        # print predict_data
+        # print raw_data
+
+
         # print sum(predict_data)
         result_compare[i + 1] = [sum(raw_data.values), int(sum([j if j > 0 else 0 for j in predict_data]) + 0.5)]
+        # result_compare[i + 1] = [sum(raw_data.values) - predict_size, int(sum([j if j > 0 else 0 for j in predict_data]) + 0.5) - predict_size]
     score = 1 - np.sqrt(sum([np.square(i[0] - i[1]) for i in result_compare.values()])/len(result_compare))/\
             (np.sqrt(sum([np.square(i[0]) for i in result_compare.values()])/len(result_compare)) +
              np.sqrt(sum([np.square(i[1]) for i in result_compare.values()])/len(result_compare)))
@@ -197,7 +218,10 @@ def predict_all():
         # print sum([i if i > 0 else 0 for i in predict_data])
 
 if __name__ == '__main__':
+    begin = datetime.datetime.now()
     predict_all()
+    end = datetime.datetime.now()
+    print end - begin
 
 
 
