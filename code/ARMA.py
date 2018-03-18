@@ -1,7 +1,7 @@
 # -*-coding:utf-8-*-
 import pandas as pd
 import numpy as np
-from statsmodels.tsa.arima_model import ARMA
+from statsmodels.tsa.arima_model1 import ARMA
 import sys
 from dateutil.relativedelta import relativedelta
 from copy import deepcopy
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     # 数据预处理
     # ts_log = np.log(ts)
     # rol_mean = ts_log.rolling(window=12).mean()
-    rol_mean = ts.rolling(window=12).mean()
+    rol_mean = ts.rolling(window=7).mean()
     rol_mean.dropna(inplace=True)
     ts_diff_1 = rol_mean.diff(1)
     ts_diff_1.dropna(inplace=True)
@@ -128,24 +128,25 @@ if __name__ == '__main__':
     model.get_proper_model()
     print 'bic:', model.bic, 'p:', model.p, 'q:', model.q
     print model.properModel.forecast()[0]
-    print model.forecast_next_day_value(type='month')
+    print model.forecast_next_day_value(type='day')
 
     # 预测结果还原
-    predict_ts = model.properModel.predict()
+    predict_ts = model.properModel.predict(end = 150,exog = None,dynamic = True)
+    print predict_ts
     diff_shift_ts = ts_diff_1.shift(1)
     diff_recover_1 = predict_ts.add(diff_shift_ts)
     rol_shift_ts = rol_mean.shift(1)
     diff_recover = diff_recover_1.add(rol_shift_ts)
-    rol_sum = ts_log.rolling(window=11).sum()
-    rol_recover = diff_recover*12 - rol_sum.shift(1)
-    log_recover = np.exp(rol_recover)
-    log_recover.dropna(inplace=True)
+    rol_sum = ts.rolling(window=6).sum()
+    rol_recover = diff_recover*7 - rol_sum.shift(1)
+    #log_recover = np.exp(rol_recover)
+    #log_recover.dropna(inplace=True)
 
     # 预测结果作图
-    ts = ts[log_recover.index]
+    ts = ts[rol_recover.index]
     plt.figure(facecolor='white')
-    log_recover.plot(color='blue', label='Predict')
+    rol_recover.plot(color='blue', label='Predict')
     ts.plot(color='red', label='Original')
     plt.legend(loc='best')
-    plt.title('RMSE: %.4f'% np.sqrt(sum((log_recover-ts)**2)/ts.size))
+    plt.title('RMSE: %.4f'% np.sqrt(sum((rol_recover-ts)**2)/ts.size))
     plt.show()

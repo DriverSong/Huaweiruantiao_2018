@@ -153,7 +153,7 @@ def test_stationarity(timeseries):
         dfoutput['Critical Value (%s)'%key] = value
     print dfoutput
 if __name__ == '__main__':
-    df = pd.read_csv('data/csv/flavor8', encoding='utf-8', index_col='date')
+    df = pd.read_csv('data/csv/flavor8_test', encoding='utf-8', index_col='date')
     df.index = pd.to_datetime(df.index)
     ts = df['count']
     # 数据预处理
@@ -161,16 +161,26 @@ if __name__ == '__main__':
     rol_mean = ts.rolling(window=7).mean()
     # rol_mean = ts_log.rolling(window=12).mean()
     rol_mean.dropna(inplace=True)
-    ts_diff_1 = rol_mean.diff(2)
+    ts_diff_1 = rol_mean.diff(1)
     ts_diff_1.dropna(inplace=True)
     ts_diff_2 = ts_diff_1.diff(1)
     ts_diff_2.dropna(inplace=True)
-    ts_diff_3 = ts_diff_2.diff(1)
+    ts_diff_3 = rol_mean.diff(2)
     ts_diff_3.dropna(inplace=True)
-    ts_diff_4 = ts_diff_3.diff(1)
-    ts_diff_4.dropna(inplace=True)
-    test_stationarity(ts_diff_1)
-    test_mean_noise_acf_pacf(ts_diff_1)  
+    """
+    from statsmodels.tsa.seasonal import seasonal_decompose
+    decomposition = seasonal_decompose(ts_diff_2, model="additive")
+    trend = decomposition.trend
+    seasonal = decomposition.seasonal
+    residual = decomposition.resid
+    #ts_diff_2.plot(color='red', label='ts_diff_2')
+    #trend.plot(color='red', label='trend')
+    #seasonal.plot(color='red', label='seasonal')
+    #residual.plot(color='red', label='residual')
+    plt.show()
+    """
+    test_stationarity(ts_diff_2)
+    test_mean_noise_acf_pacf(ts_diff_2)  
 """
     # 模型拟合
     model = arima_model(ts_diff_1)
