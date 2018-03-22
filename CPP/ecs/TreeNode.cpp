@@ -1,6 +1,7 @@
 #include "TreeNode.h"
 
-TreeNode::TreeNode(int  num = 0, int value = 0, int layer = 0, TreeNode* Parent = 0) {
+TreeNode::TreeNode(int  num = 0, int value = 0, int layer = 0, TreeNode* Parent = 0)
+{
 	_num = num;
 	_value = value;
 	_layer = layer;
