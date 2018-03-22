@@ -1,3 +1,9 @@
+/*
+* Brief:	三类背包函数源文件
+* Author:	SherlockHsu
+* Date:		2018-03-22
+*/
+
 #include "knapsack.h"
 #include <iostream>
 
