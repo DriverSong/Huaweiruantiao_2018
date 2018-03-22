@@ -8,6 +8,7 @@ bool Date::IsLeap()
 	}
 	return false;
 }
+
 int Date::_GetMonthDay(int year, int month)  //一个月有多少天  
 {
 	int arr_monthday[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
