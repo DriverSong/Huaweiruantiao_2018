@@ -78,6 +78,7 @@ bool isEnough(int sumCPU, int sumMEM, int numFla, int * vecFlaCPU, int * vecFlaM
 		numCPU += vecFla[i] * vecFlaCPU[i];
 		numMEM += vecFla[i] * vecFlaMEM[i];
 	}
+	
 	// std::cout << "Test:\t" << numCPU << "\t" << numMEM << std::endl;
 	return numCPU <= sumCPU&&numMEM <= sumMEM;
 }
