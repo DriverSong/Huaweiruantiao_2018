@@ -1,3 +1,9 @@
+/*
+* Brief:	分配函数源文件
+* Author:	SherlockHsu
+* Date:		2018-03-22
+*/
+
 #include "distribution.h"
 #include "knapsack.h"
 

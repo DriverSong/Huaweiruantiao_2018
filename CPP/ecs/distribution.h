@@ -1,3 +1,9 @@
+/*
+* Brief:	分配函数头文件
+* Author:	SherlockHsu
+* Date:		2018-03-22
+*/
+
 #pragma once
 #include <string>
 
