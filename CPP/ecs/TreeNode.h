@@ -1,7 +1,8 @@
 #pragma once
 #include<list>
 
-struct TreeNode {
+struct TreeNode
+{
 	int _num;							// 数量
 	int _value;							// 价值量
 	int _layer;							// 层数
