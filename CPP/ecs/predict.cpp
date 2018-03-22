@@ -5,6 +5,7 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <vector>
 
 #define MAX_PERIOD 30
 #include "Date.h"
@@ -23,14 +24,14 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	int sumCPU, sumMEM, sumHD,					// 物理服务器CPU核数，内存大小（GB），硬盘大小（GB）
 		dateSpanTrain, dateSpanSum,				// 训练时间跨度，总时间跨度
 		numFla, numPeriod, indxPeriod,			// Flavor数，周期数，周期序号
-		vCPU, vMEM, numPHY, numFlaValid;			// CPU核数，内存大小（MB），物理服务器数目,有效Flavor数
+		vCPU, vMEM, numPHY, numFlaValid;		// CPU核数，内存大小（MB），物理服务器数目,有效Flavor数
 
 	std::map<std::string, int> mapFlaIndx;		// Flavor名map
-	std::string vecFlaName[MAX_FLAVOR];
-	int vecFlaCPU[MAX_FLAVOR];
-	int vecFlaMEM[MAX_FLAVOR];
-	int vecFlaPre[MAX_FLAVOR];
-	int vecData[MAX_FLAVOR][MAX_PERIOD];
+	std::string arrFlaName[MAX_FLAVOR];
+	int arrFlaCPU[MAX_FLAVOR];
+	int arrFlaMEM[MAX_FLAVOR];
+	int arrFlaPre[MAX_FLAVOR];
+	int arrData[MAX_FLAVOR][MAX_PERIOD];
 	int res[MAX_PHY][MAX_FLAVOR];
 
 	// 读取info
@@ -42,9 +43,9 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	{
 		ss << info[i + 3];
 		ss >> flaName >> vCPU >> vMEM;
-		vecFlaName[i] = flaName;
-		vecFlaCPU[i] = vCPU;
-		vecFlaMEM[i] = vMEM / 1024;
+		arrFlaName[i] = flaName;
+		arrFlaCPU[i] = vCPU;
+		arrFlaMEM[i] = vMEM / 1024;
 		mapFlaIndx.insert(std::make_pair(flaName, i));
 	}
 	ss << info[4 + numFla];
@@ -60,7 +61,7 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	for (int i = 0; i < MAX_FLAVOR; i++)
 	{
 		for (int j = 0; j < MAX_PERIOD; j++)
-			vecData[i][j] = 0;
+			arrData[i][j] = 0;
 	}
 
 	// 分析data中的日期
@@ -86,7 +87,7 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 			indxPeriod++;
 			dateEnd += dateSpanTrain;
 		}
-		vecData[mapFlaIndx[flaName]][indxPeriod]++;
+		arrData[mapFlaIndx[flaName]][indxPeriod]++;
 	}
 	ss.clear();
 	numPeriod = indxPeriod + 1;
@@ -95,21 +96,21 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	ofs.open("vecFlavor.txt");
 	for (int i = 0; i < numFla; i++)
 	{
-		ofs << vecFlaName[i] << ':' << '\t';
+		ofs << arrFlaName[i] << ':' << '\t';
 		for (int j = 0; j < numPeriod; j++)
-			ofs << vecData[i][j] << '\t';
+			ofs << arrData[i][j] << '\t';
 		ofs << std::endl;
 	}
 	ofs.close();
 
 	// 预测
 	for (int i = 0; i < numFla; i++)
-		vecFlaPre[i] = vecData[i][numPeriod - 1];
+		arrFlaPre[i] = arrData[i][numPeriod - 1];
 
 	// 计算有效Flavor数
 	numFlaValid = 0;
 	for (int i = 0; i < numFla; i++)
-		if (vecFlaPre[i] != 0)
+		if (arrFlaPre[i] != 0)
 			numFlaValid++;
 
 
@@ -117,14 +118,14 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	for (int i = 0; i < MAX_PHY; i++)
 		for (int j = 0; j < numFla; j++)
 			res[i][j] = 0;
-	numPHY = distribution(sumCPU, sumMEM, numFla, target, vecFlaCPU, vecFlaMEM, vecFlaPre, res);
+	numPHY = distribution(sumCPU, sumMEM, numFla, target, arrFlaCPU, arrFlaMEM, arrFlaPre, res);
 
 	// 输出结果
 	ofs.open(filename);
 	ofs << numFlaValid << std::endl;
 	for (int i = 0; i < numFla; i++)
-		if (vecFlaPre[i] != 0)
-			ofs << vecFlaName[i] << " " << vecFlaPre[i] << std::endl;
+		if (arrFlaPre[i] != 0)
+			ofs << arrFlaName[i] << " " << arrFlaPre[i] << std::endl;
 	ofs << std::endl;
 	ofs << numPHY << std::endl;
 	for (int i = 0; i < numPHY; i++)
@@ -132,7 +133,7 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 		ofs << i + 1;
 		for (int j = 0; j < numFla; j++)
 			if (res[i][j] != 0)
-				ofs << " " << vecFlaName[j] << " " << res[i][j];
+				ofs << " " << arrFlaName[j] << " " << res[i][j];
 		ofs << std::endl;
 	}
 
