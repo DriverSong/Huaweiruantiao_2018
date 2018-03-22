@@ -20,19 +20,17 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	std::ofstream ofs;							// 输出文件流
 	std::string serial, flaName, time, target;	// 虚拟机ID，虚拟机规格，创建时间，优化资源维度名
 	Date date, dateFirst, dateLast,				// 临时日期变量，data中最早日期，data中最晚日期
-		dateBegin, dateEnd;						// 最早有用日期，一次循环中最晚日期
+		dateBegin, dateNow;						// 最早有用日期，一次循环中最晚日期
 	int sumCPU, sumMEM, sumHD,					// 物理服务器CPU核数，内存大小（GB），硬盘大小（GB）
-		dateSpanTrain, dateSpanSum,				// 训练时间跨度，总时间跨度
-		numFla, numPeriod, indxPeriod,			// Flavor数，周期数，周期序号
+		numFla, period, sumDate, indxDate,		// Flavor数，周期长度，总日期数，日期序号
 		vCPU, vMEM, numPHY, numFlaValid;		// CPU核数，内存大小（MB），物理服务器数目,有效Flavor数
 
 	std::map<std::string, int> mapFlaIndx;		// Flavor名map
-	std::string arrFlaName[MAX_FLAVOR];
-	int arrFlaCPU[MAX_FLAVOR];
-	int arrFlaMEM[MAX_FLAVOR];
-	int arrFlaPre[MAX_FLAVOR];
-	int arrData[MAX_FLAVOR][MAX_PERIOD];
-	int res[MAX_PHY][MAX_FLAVOR];
+	std::string arrFlaName[MAX_FLAVOR];			// Flavor名数组
+	int arrFlaCPU[MAX_FLAVOR];					// 各Flavor对应CPU核数数组
+	int arrFlaMEM[MAX_FLAVOR];					// 各Flavor对应内存数组
+	//int arrFlaPre[MAX_FLAVOR];				// 各Flavor预测结果
+	int res[MAX_PHY][MAX_FLAVOR];				// 分配结果数组
 
 	// 读取info
 	ss << info[0];
@@ -53,16 +51,9 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	ss << info[6 + numFla];
 	ss >> dateBegin >> time;
 	ss << info[7 + numFla];
-	ss >> dateEnd >> time;
+	ss >> dateNow >> time;
 	ss.clear();
-	dateSpanTrain = dateEnd - dateBegin;
-
-	// 各flavor每周数目二维数组初始化	
-	for (int i = 0; i < MAX_FLAVOR; i++)
-	{
-		for (int j = 0; j < MAX_PERIOD; j++)
-			arrData[i][j] = 0;
-	}
+	period = dateNow - dateBegin;
 
 	// 分析data中的日期
 	ss << data[0];
@@ -70,42 +61,46 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	ss << data[data_num - 1];
 	ss >> serial >> flaName >> dateLast >> time;
 	ss.clear();
-	dateSpanSum = dateLast - dateFirst + 1;
-	dateBegin = dateFirst + dateSpanSum%dateSpanTrain;
-	dateEnd = dateBegin + dateSpanTrain;
+	sumDate = dateLast - dateFirst + 1;
+
+	// vecData初始化
+	std::vector<std::vector<int>> vecData(numFla, std::vector<int>(sumDate, 0));
 
 	// 统计各flavor每周数目
-	indxPeriod = 0;
+	indxDate = 0;
+	dateNow = dateFirst;
 	for (int i = 0; i < data_num; i++)
 	{
 		ss << data[i];
 		ss >> serial >> flaName >> date >> time;
-		if (date < dateBegin || mapFlaIndx.find(flaName) == mapFlaIndx.end())
+		if (mapFlaIndx.find(flaName) == mapFlaIndx.end())
 			continue;
-		while (date >= dateEnd)
+		while (date > dateNow)
 		{
-			indxPeriod++;
-			dateEnd += dateSpanTrain;
+			indxDate++;
+			dateNow++;
 		}
-		arrData[mapFlaIndx[flaName]][indxPeriod]++;
+		vecData[mapFlaIndx[flaName]][indxDate]++;
 	}
 	ss.clear();
-	numPeriod = indxPeriod + 1;
 
 	// fstream输出flavor统计表
 	ofs.open("vecFlavor.txt");
 	for (int i = 0; i < numFla; i++)
 	{
 		ofs << arrFlaName[i] << ':' << '\t';
-		for (int j = 0; j < numPeriod; j++)
-			ofs << arrData[i][j] << '\t';
+		for (int j = 0; j < sumDate; j++)
+			ofs << vecData[i][j] << '\t';
 		ofs << std::endl;
 	}
 	ofs.close();
 
 	// 预测
-	for (int i = 0; i < numFla; i++)
-		arrFlaPre[i] = arrData[i][numPeriod - 1];
+	//for (int i = 0; i < numFla; i++)
+	//	arrFlaPre[i] = arrData[i][numPeriod - 1];
+	int arrFlaPre[MAX_FLAVOR] = { 30,30,30,30,30,
+								 30,30,30,30,30,
+								 30,30,30,30,30 };
 
 	// 计算有效Flavor数
 	numFlaValid = 0;
@@ -136,7 +131,6 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 				ofs << " " << arrFlaName[j] << " " << res[i][j];
 		ofs << std::endl;
 	}
-
 
 	// 直接调用输出文件的方法输出到指定文件中(ps请注意格式的正确性，如果有解，第一行只有一个数据；第二行为空；第三行开始才是具体的数据，数据之间用一个空格分隔开)
 	//write_result(strResult.c_str(), filename);
