@@ -2,8 +2,6 @@
 #include<sstream>
 #include<assert.h>  
 
-
-
 class Date
 {
 public:
