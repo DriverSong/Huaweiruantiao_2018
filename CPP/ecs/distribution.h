@@ -2,7 +2,7 @@
 #include <string>
 
 #define MAX_FLAVOR 15
-#define MAX_PHY 127
+#define MAX_PHY 100
 
 /*
 服务器分配函数
