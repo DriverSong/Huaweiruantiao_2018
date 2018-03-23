@@ -67,7 +67,7 @@ std::vector<int> PredictAll(std::vector<std::vector<double> > AlldataArray,int P
                 sumPredict += ((double)tmpPredict[k])/(double)cnt;
             }
             //返回sumpredict的四舍五入值
-            int predictsingle = (int)std::round(sumPredict); 
+            int predictsingle = (int)std::round(sumPredict);
             if (predictsingle<0)
             {
                 predictsingle = 0;
@@ -75,11 +75,13 @@ std::vector<int> PredictAll(std::vector<std::vector<double> > AlldataArray,int P
             dataArray.push_back(double(predictsingle));
             weekPredict += predictsingle;
         }
+        
         //打印并比较预测值与真实值差距
         //std::cout<<"week of Exact:"<<SumLastWeek<<std::endl;
-        std::cout<<"week of Predict"<<n+1<<"="<<weekPredict<<std::endl;
+        //std::cout<<"week of Predict:"<<weekPredict<<std::endl;
         //std::cout<<"n:"<<n+1<<std::endl;
         //actual[n] = SumLastWeek;
+        std::cout<<"week of Predict"<<n+1<<"="<<weekPredict<<std::endl;
         predict[n] = weekPredict;
     }
     for(int i=0;i<15;i++)
