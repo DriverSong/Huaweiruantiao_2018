@@ -1,5 +1,6 @@
 #include "predict.h"
 #include "distribution.h"
+#include "prediction.h"
 
 #include <iostream>
 #include <sstream>
@@ -28,7 +29,7 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	std::string arrFlaName[MAX_FLAVOR];			// Flavor名数组
 	int arrFlaCPU[MAX_FLAVOR];					// 各Flavor对应CPU核数数组
 	int arrFlaMEM[MAX_FLAVOR];					// 各Flavor对应内存数组
-	//int arrFlaPre[MAX_FLAVOR];				// 各Flavor预测结果
+	int arrFlaPre[MAX_FLAVOR];				// 各Flavor预测结果
 	int res[MAX_PHY][MAX_FLAVOR];				// 分配结果数组
 
 	// 读取info
@@ -63,7 +64,7 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	sumDate = dateLast - dateFirst + 1;
 
 	// vecData初始化
-	std::vector<std::vector<int>> vecData(numFla, std::vector<int>(sumDate, 0));
+	std::vector<std::vector<double>> vecData(numFla, std::vector<double>(sumDate, 0));
 
 	// 统计各flavor每周数目
 	indxDate = 0;
@@ -92,15 +93,12 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	// 预测
 	//for (int i = 0; i < numFla; i++)
 	//	arrFlaPre[i] = arrData[i][numPeriod - 1];
-	int arrFlaPre[MAX_FLAVOR] = { 30,30,30,30,30,
-								 30,30,30,30,30,
-								 30,30,30,30,30 };
+	PredictAll(vecData, period, numFla, arrFlaPre);
 
 	// 计算有效Flavor数
 	numFlaValid = 0;
 	for (int i = 0; i < numFla; i++)
-		if (arrFlaPre[i] != 0)
-			numFlaValid++;
+		numFlaValid += arrFlaPre[i];
 
 
 	// 分配
