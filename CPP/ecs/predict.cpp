@@ -18,8 +18,9 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	// char * result_file = (char *)"17\n\n0 8 0 20";
 
 	std::stringstream ss;						// 字符串流
-	std::ofstream ofs;							// 输出文件流
+	//std::ofstream ss;							// 输出文件流
 	std::string serial, flaName, time, target;	// 虚拟机ID，虚拟机规格，创建时间，优化资源维度名
+	std::string str, strResult;					// 临时str，结果字符串
 	Date date, dateFirst, dateLast;				// 当前日期，data中最早日期，data中最晚日期
 	int sumCPU, sumMEM, sumHD,					// 物理服务器CPU核数，内存大小（GB），硬盘大小（GB）
 		numFla, period, sumDate, indxDate,		// Flavor数，周期长度，总日期数，日期序号
@@ -79,16 +80,16 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	}
 	ss.clear();
 
-	// fstream输出flavor统计表
-	ofs.open("vecFlavor.txt");
-	for (int i = 0; i < numFla; i++)
-	{
-		ofs << arrFlaName[i] << ':' << '\t';
-		for (int j = 0; j < sumDate; j++)
-			ofs << vecData[i][j] << '\t';
-		ofs << std::endl;
-	}
-	ofs.close();
+	//// fstream输出flavor统计表
+	//ofs.open("vecFlavor.txt");
+	//for (int i = 0; i < numFla; i++)
+	//{
+	//	ofs << arrFlaName[i] << ':' << '\t';
+	//	for (int j = 0; j < sumDate; j++)
+	//		ofs << vecData[i][j] << '\t';
+	//	ofs << std::endl;
+	//}
+	//ofs.close();
 
 	// 预测
 	//for (int i = 0; i < numFla; i++)
@@ -108,24 +109,30 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	numPHY = distribution(sumCPU, sumMEM, numFla, target, arrFlaCPU, arrFlaMEM, arrFlaPre, res);
 
 	// 输出结果
-	ofs.open(filename);
-	ofs << numFlaValid << std::endl;
+	ss << numFlaValid << std::endl;
 	for (int i = 0; i < numFla; i++)
 		if (arrFlaPre[i] != 0)
-			ofs << arrFlaName[i] << " " << arrFlaPre[i] << std::endl;
-	ofs << std::endl;
-	ofs << numPHY << std::endl;
+			ss << arrFlaName[i] << " " << arrFlaPre[i] << std::endl;
+	ss << std::endl;
+	ss << numPHY << std::endl;
 	for (int i = 0; i < numPHY; i++)
 	{
-		ofs << i + 1;
+		ss << i + 1;
 		for (int j = 0; j < numFla; j++)
 			if (res[i][j] != 0)
-				ofs << " " << arrFlaName[j] << " " << res[i][j];
-		ofs << std::endl;
+				ss << " " << arrFlaName[j] << " " << res[i][j];
+		ss << std::endl;
+	}
+	getline(ss, str);
+	while (getline(ss, str))
+	{
+		strResult += str;
+		strResult += '\n';
 	}
 
+
 	// 直接调用输出文件的方法输出到指定文件中(ps请注意格式的正确性，如果有解，第一行只有一个数据；第二行为空；第三行开始才是具体的数据，数据之间用一个空格分隔开)
-	//write_result(strResult.c_str(), filename);
+	write_result(strResult.c_str(), filename);
 
 	return;
 }
