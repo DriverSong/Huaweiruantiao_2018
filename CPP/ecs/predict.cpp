@@ -14,8 +14,6 @@
 //你要完成的功能总入口
 void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int data_num, char * filename)
 {
-	// 需要输出的内容
-	// char * result_file = (char *)"17\n\n0 8 0 20";
 
 	std::stringstream ss;						// 字符串流
 	//std::ofstream ss;							// 输出文件流
@@ -109,26 +107,57 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	numPHY = distribution(sumCPU, sumMEM, numFla, target, arrFlaCPU, arrFlaMEM, arrFlaPre, res);
 
 	// 输出结果
-	ss << numFlaValid << std::endl;
+	//ss << numFlaValid << std::endl;
+	//for (int i = 0; i < numFla; i++)
+	//	ss << arrFlaName[i] << " " << arrFlaPre[i] << std::endl;
+	//ss << std::endl;
+	//ss << numPHY << std::endl;
+	//for (int i = 0; i < numPHY; i++)
+	//{
+	//	ss << i + 1;
+	//	for (int j = 0; j < numFla; j++)
+	//		if (res[i][j] != 0)
+	//			ss << " " << arrFlaName[j] << " " << res[i][j];
+	//	ss << std::endl;
+	//}
+	//getline(ss, str);
+	//getline(ss, strResult);
+	//strResult += '\n';
+	//while (getline(ss, str))
+	//{
+	//	strResult += str;
+	//	strResult += '\n';
+	//}
+	//strResult.pop_back();
+
+	strResult += std::to_string(numFlaValid);
+	strResult += '\n';
 	for (int i = 0; i < numFla; i++)
-		ss << arrFlaName[i] << " " << arrFlaPre[i] << std::endl;
-	ss << std::endl;
-	ss << numPHY << std::endl;
+	{
+		strResult += arrFlaName[i];
+		strResult += ' ';
+		strResult += std::to_string(arrFlaPre[i]);
+		strResult += '\n';
+	}
+	strResult += '\n';
+	strResult += std::to_string(numPHY);
+	strResult += '\n';
 	for (int i = 0; i < numPHY; i++)
 	{
-		ss << i + 1;
+		strResult += std::to_string(i + 1);
 		for (int j = 0; j < numFla; j++)
 			if (res[i][j] != 0)
-				ss << " " << arrFlaName[j] << " " << res[i][j];
-		ss << std::endl;
-	}
-	getline(ss, str);
-	while (getline(ss, str))
-	{
-		strResult += str;
+			{
+				strResult += ' ';
+				strResult += arrFlaName[j];
+				strResult += ' ';
+				strResult += std::to_string(res[i][j]);
+			}
 		strResult += '\n';
 	}
 
+	// 需要输出的内容
+	char * result_file = (char *)"17\n\n0 8 0 20";
 
 	// 直接调用输出文件的方法输出到指定文件中(ps请注意格式的正确性，如果有解，第一行只有一个数据；第二行为空；第三行开始才是具体的数据，数据之间用一个空格分隔开)
 	write_result(strResult.c_str(), filename);
