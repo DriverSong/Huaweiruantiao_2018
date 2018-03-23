@@ -111,8 +111,7 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	// Êä³ö½á¹û
 	ss << numFlaValid << std::endl;
 	for (int i = 0; i < numFla; i++)
-		if (arrFlaPre[i] != 0)
-			ss << arrFlaName[i] << " " << arrFlaPre[i] << std::endl;
+		ss << arrFlaName[i] << " " << arrFlaPre[i] << std::endl;
 	ss << std::endl;
 	ss << numPHY << std::endl;
 	for (int i = 0; i < numPHY; i++)
