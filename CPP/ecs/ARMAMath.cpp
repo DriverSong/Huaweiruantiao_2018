@@ -246,7 +246,7 @@ std::vector<double> ARMAMath::computeMACoe(std::vector<double> dataArray, int q)
     int p = (int)std::log(dataArray.size());
 
 //		System.out.println("The best p is " + p);
-    // 求取系数
+    // 姹傚彇绯绘暟
     std::vector<double> bestGarma(this->autocovData(dataArray,p));
     std::vector<std::vector<double> > bestResult(this->LevinsonSolve(bestGarma));
 
@@ -274,7 +274,7 @@ std::vector<double> ARMAMath::computeMACoe(std::vector<double> dataArray, int q)
     {
         MACoe[i] = -tmp[q][i];
     }
-    MACoe[0] = 1 / tmp[0][q];		//噪声参数
+    MACoe[0] = 1 / tmp[0][q];		//鍣０鍙傛暟
 
     return MACoe;
 }

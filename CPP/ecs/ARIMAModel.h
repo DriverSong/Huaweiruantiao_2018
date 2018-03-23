@@ -19,7 +19,7 @@ private:
 public:
     ARIMAModel(std::vector<double> dataArray) {this->dataArray.assign(dataArray.begin(),dataArray.end());}
 
-    std::vector<double> preFirDiff(std::vector<double> preData){ //Ò»½×²î·Ö(1)
+    std::vector<double> preFirDiff(std::vector<double> preData){ //ä¸€é˜¶å·®åˆ†(1)
         std::vector<double> res;
         for(int i=0;i<preData.size()-1;i++){
             double tmpData =preData[i+1]-preData[i];
@@ -28,7 +28,7 @@ public:
         return res;
     }
 
-    std::vector<double> preSeasonDiff(std::vector<double> preData){ //¼¾½ÚÐÔ²î·Ö(6, 7)
+    std::vector<double> preSeasonDiff(std::vector<double> preData){ //å­£èŠ‚æ€§å·®åˆ†(6, 7)
         std::vector<double> res;
 
         for(int i=0;i<preData.size()-7;i++){
@@ -39,7 +39,7 @@ public:
         return res;
     }
     std::vector<double> preDealDiff(int period){
-        if(period>=dataArray.size()-1){  // ½«6Ò²¹éÎª¼¾½ÚÐÔ²î·Ö
+        if(period>=dataArray.size()-1){  // å°†6ä¹Ÿå½’ä¸ºå­£èŠ‚æ€§å·®åˆ†
             period=0;
         }
 
@@ -61,22 +61,22 @@ public:
         }
     }
 /** 
- * ¼ÆËãARMAÄ£ÐÍµÄp,qÖµ 
- * @param period ÖÜÆÚ 
- * @return Ä£ÐÍµÄp,qÖµ 
+ * è®¡ç®—ARMAæ¨¡åž‹çš„p,qå€¼ 
+ * @param period å‘¨æœŸ 
+ * @return æ¨¡åž‹çš„p,qå€¼ 
  */ 
     std::vector<int> getARIMAModel(int period,std::vector<std::vector<int> > notModel,bool needNot){
 
         std::vector<double> data = this->preDealDiff(period);
         //for(int i=0;i<data.size();i++) std::cout<<data[i]<<std::endl;
-        //ÉèÖÃAICÏµÊý£¬ÅÐ¶ÏÄ£ÐÍÄâºÏ³Ì¶È
+        //è®¾ç½®AICç³»æ•°ï¼Œåˆ¤æ–­æ¨¡åž‹æ‹Ÿåˆç¨‹åº¦
         double minAIC = 1.7976931348623157E308;
         std::vector<int> bestModel(3);
         int type = 0;
         std::vector<std::vector<double> > coe;
 
-        // len:×î´óp,qºÏÆðÀ´µÄ½×Êý
-        // model²úÉú, ¼´²úÉúÏàÓ¦µÄp, q²ÎÊý
+        // len:æœ€å¤§p,qåˆèµ·æ¥çš„é˜¶æ•°
+        // modeläº§ç”Ÿ, å³äº§ç”Ÿç›¸åº”çš„p, qå‚æ•°
         int len = data.size();
 
         if (len > 14)
@@ -93,7 +93,7 @@ public:
         {
             for (int j = 0; j <= len - i; ++j)
             {
-                //´Ó0 1 ¿ªÊ¼µ½
+                //ä»Ž0 1 å¼€å§‹åˆ°
                 if (i == 0 && j == 0)
                     continue;
                 model[cnt][0] = i;
@@ -103,7 +103,7 @@ public:
         //std::cout<<size<<std::endl;
         for (int i = 0; i < cnt; ++i)
         {
-            // ¿ØÖÆÑ¡ÔñµÄ²ÎÊý
+            // æŽ§åˆ¶é€‰æ‹©çš„å‚æ•°
 
             bool token = false;
             if (needNot)
@@ -158,7 +158,7 @@ public:
             ARMAMath ar_math;
             double aic = ar_math.getModelAIC(coe, data, type);
             //std::cout<<aic<<std::endl;
-            // ÔÚÇó½â¹ý³ÌÖÐÈç¹û½×ÊýÑ¡È¡¹ý³¤£¬¿ÉÄÜ»á³öÏÖNAN»òÕßÎÞÇî´óµÄÇé¿ö
+            // åœ¨æ±‚è§£è¿‡ç¨‹ä¸­å¦‚æžœé˜¶æ•°é€‰å–è¿‡é•¿ï¼Œå¯èƒ½ä¼šå‡ºçŽ°NANæˆ–è€…æ— ç©·å¤§çš„æƒ…å†µ
 
             if (aic<=1.7976931348623157E308 && !std::isnan(aic) && aic < minAIC)
             {
@@ -173,10 +173,10 @@ public:
         return bestModel;
     }
 /** 
- * ¶ÔÔ¤²âÖµ½øÐÐ·´²î·Ö´¦Àí 
- * @param predictValue Ô¤²âµÄÖµ
-*  @param period ²î·ÖÖÜÆÚ 
- * @return ·´²î·Ö¹ýºóµÄÔ¤²âÖµ 
+ * å¯¹é¢„æµ‹å€¼è¿›è¡Œåå·®åˆ†å¤„ç† 
+ * @param predictValue é¢„æµ‹çš„å€¼
+*  @param period å·®åˆ†å‘¨æœŸ 
+ * @return åå·®åˆ†è¿‡åŽçš„é¢„æµ‹å€¼ 
  */ 
     int aftDeal(int predictValue,int period){
         if (period >= dataArray.size())
@@ -221,10 +221,10 @@ public:
         return X;
     }
 /** 
- * ½øÐÐÒ»²½Ô¤²â 
- * @param p ARMAÄ£ÐÍµÄARµÄ½×Êý 
- * @param q ARMAÄ£ÐÍµÄMAµÄ½×Êý 
- * @return Ô¤²âÖµ 
+ * è¿›è¡Œä¸€æ­¥é¢„æµ‹ 
+ * @param p ARMAæ¨¡åž‹çš„ARçš„é˜¶æ•° 
+ * @param q ARMAæ¨¡åž‹çš„MAçš„é˜¶æ•° 
+ * @return é¢„æµ‹å€¼ 
  */ 
     int predictValue(int p,int q,int period){
         std::vector<double> data(this->preDealDiff(period));
@@ -243,7 +243,7 @@ public:
                 {
                     tmpMA += maCoe[i] * errData[i];
                 }
-                //²úÉú¸÷¸öÊ±¿ÌµÄÔëÉù
+                //äº§ç”Ÿå„ä¸ªæ—¶åˆ»çš„å™ªå£°
                 for(int j = q; j > 0; --j)
                 {
                     errData[j] = errData[j - 1];
@@ -251,7 +251,7 @@ public:
                 errData[0] = gaussrand()*std::sqrt(maCoe[0]);
             }
 
-            predict = (int)(tmpMA); //²úÉúÔ¤²â
+            predict = (int)(tmpMA); //äº§ç”Ÿé¢„æµ‹
         }
         else if (q == 0)
         {
@@ -284,7 +284,7 @@ public:
                     tmpMA += maCoe[i] * errData[i];
                 }
 
-                //²úÉú¸÷¸öÊ±¿ÌµÄÔëÉù
+                //äº§ç”Ÿå„ä¸ªæ—¶åˆ»çš„å™ªå£°
                 for(int j = q; j > 0; --j)
                 {
                     errData[j] = errData[j-1];

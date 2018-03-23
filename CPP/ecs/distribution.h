@@ -1,5 +1,5 @@
 /*
-* Brief:	·ÖÅäº¯ÊıÍ·ÎÄ¼ş
+* Brief:	åˆ†é…å‡½æ•°å¤´æ–‡ä»¶
 * Author:	SherlockHsu
 * Date:		2018-03-22
 */
@@ -11,15 +11,15 @@
 #define MAX_PHY 100
 
 /*
-·şÎñÆ÷·ÖÅäº¯Êı
-Input:	CPUºËÊıÉÏÏŞ£¬ÄÚ´æÉÏÏŞ£¨GB£©£¬flavorÀàĞÍÊı£¬´ıÓÅ»¯Î¬¶È£¬
-		¸÷flavorCPUºËÊı£¬¸÷flavorÄÚ´æ´óĞ¡£¬¸÷flavorÔ¤²â½á¹û£¬·ÖÅä½á¹û
-Output:	ÎïÀí·şÎñÆ÷ÊıÄ¿
+æœåŠ¡å™¨åˆ†é…å‡½æ•°
+Input:	CPUæ ¸æ•°ä¸Šé™ï¼Œå†…å­˜ä¸Šé™ï¼ˆGBï¼‰ï¼Œflavorç±»å‹æ•°ï¼Œå¾…ä¼˜åŒ–ç»´åº¦ï¼Œ
+		å„flavorCPUæ ¸æ•°ï¼Œå„flavorå†…å­˜å¤§å°ï¼Œå„flavoré¢„æµ‹ç»“æœï¼Œåˆ†é…ç»“æœ
+Output:	ç‰©ç†æœåŠ¡å™¨æ•°ç›®
 */
 int distribution(int sumCPU, int sumMEM, int numFla, std::string target,
 	int* vecFlaCPU, int* vecFlaMEM, int* vecFlaPre, int res[MAX_PHY][MAX_FLAVOR]);
 
 /*
-ÅĞ¶ÏÊÇ·ñ¿ÉÒÔ·ÅÈëÒ»¸öÎïÀí·şÎñÆ÷
+åˆ¤æ–­æ˜¯å¦å¯ä»¥æ”¾å…¥ä¸€ä¸ªç‰©ç†æœåŠ¡å™¨
 */
 bool isEnough(int sumCPU, int sumMEM, int numFla, int* vecFlaCPU, int* vecFlaMEM, int* vecFla);

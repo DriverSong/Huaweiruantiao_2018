@@ -9,7 +9,7 @@ bool Date::IsLeap()
 	return false;
 }
 
-int Date::_GetMonthDay(int year, int month)  //Ò»¸öÔÂÓÐ¶àÉÙÌì  
+int Date::_GetMonthDay(int year, int month)  //ä¸€ä¸ªæœˆæœ‰å¤šå°‘å¤©  
 {
 	int arr_monthday[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 	assert(month > 0 && month <= 12);
@@ -19,7 +19,7 @@ int Date::_GetMonthDay(int year, int month)  //Ò»¸öÔÂÓÐ¶àÉÙÌì
 	return day;
 }
 
-Date& Date:: operator=(const Date& d)  //¸³Öµ  
+Date& Date:: operator=(const Date& d)  //èµ‹å€¼  
 {
 	if (this != &d)
 	{
@@ -41,10 +41,10 @@ bool Date:: operator!=(const Date& d)
 
 bool Date:: operator>(const Date& d)
 {
-	return (_year > d._year) //Äê  
-		|| (_year == d._year) && (_month > d._month)// Äê-ÔÂ  
+	return (_year > d._year) //å¹´  
+		|| (_year == d._year) && (_month > d._month)// å¹´-æœˆ  
 		|| (_year == d._year) && (_month == d._month) && (_day > d._day);
-	//Äê-ÔÂ-ÈÕ  
+	//å¹´-æœˆ-æ—¥  
 }
 bool Date:: operator>=(const Date& d)
 {
@@ -63,7 +63,7 @@ bool Date:: operator<=(const Date& d)
 	return (*this == d) || (*this < d);
 }
 
-Date& Date::operator++()  //×Ô¼Ó ÌìÊý  //Ç°ÖÃ++  
+Date& Date::operator++()  //è‡ªåŠ  å¤©æ•°  //å‰ç½®++  
 {
 	//Date tmp(*this);  
 
@@ -81,7 +81,7 @@ Date& Date::operator++()  //×Ô¼Ó ÌìÊý  //Ç°ÖÃ++
 	return *this;
 }
 
-Date Date::operator++(int)  //ºóÖÃ++  
+Date Date::operator++(int)  //åŽç½®++  
 {
 	Date temp(*this);
 	_day++;
@@ -98,7 +98,7 @@ Date Date::operator++(int)  //ºóÖÃ++
 	return temp;
 }
 
-Date& Date::operator--()  //Ç°ÖÃ--  
+Date& Date::operator--()  //å‰ç½®--  
 {
 	_day--;
 	if (_day < 1)
@@ -114,7 +114,7 @@ Date& Date::operator--()  //Ç°ÖÃ--
 	return *this;
 }
 
-Date Date::operator--(int)        //ºóÖÃ--  
+Date Date::operator--(int)        //åŽç½®--  
 {
 	Date temp(*this);
 	_day--;
@@ -138,7 +138,7 @@ int Date::operator-(const Date & d)
 	int flag = 1;
 	if (*this < d)
 	{
-		//Ê¹ÓÃ¿âº¯Êý    std::swap(Max,Min);  
+		//ä½¿ç”¨åº“å‡½æ•°    std::swap(Max,Min);  
 		Max = d;
 		Min = *this;
 		flag = -1;
@@ -152,7 +152,7 @@ int Date::operator-(const Date & d)
 	return days*flag;
 }
 
-Date Date::operator+(int days)         /*****************¼ÓÌìÊý*****************/
+Date Date::operator+(int days)         /*****************åŠ å¤©æ•°*****************/
 {
 	Date tmp(*this);
 	if (days < 0)
@@ -179,10 +179,10 @@ Date Date::operator+(int days)         /*****************¼ÓÌìÊý*****************
 Date& Date:: operator +=(int days)//   +=  
 {
 	*this = *this + days;
-	return *this;   //·µ»Ø*this,ËùÒÔÓÃ ÒýÓÃ×öÇÒ·µ»ØÖµ  
+	return *this;   //è¿”å›ž*this,æ‰€ä»¥ç”¨ å¼•ç”¨åšä¸”è¿”å›žå€¼  
 }
 
-Date Date::operator-(int days)    /***************¼õÌìÊý******************/
+Date Date::operator-(int days)    /***************å‡å¤©æ•°******************/
 {
 	Date tmp(*this);
 	if (days < 0)
@@ -190,18 +190,18 @@ Date Date::operator-(int days)    /***************¼õÌìÊý******************/
 		return  tmp + (-days);
 	}
 	tmp._day -= days;
-	while (tmp._day <= 0)  //×¢ÒâÃ»ÓÐ1ÔÂ0ºÅ¡£¡£¡£  
+	while (tmp._day <= 0)  //æ³¨æ„æ²¡æœ‰1æœˆ0å·ã€‚ã€‚ã€‚  
 	{
 		if (tmp._month == 1)
 		{
 			tmp._year--;
 			tmp._month = 12;
-		}//Ð£ÕýÔÂÊý  
+		}//æ ¡æ­£æœˆæ•°  
 		else
 		{
 			--tmp._month;
 		}
-		tmp._day += _GetMonthDay(tmp._year, tmp._month);//ÉÏÒ»¸öÔÂµÄÌìÊý£¡£¡£¡  
+		tmp._day += _GetMonthDay(tmp._year, tmp._month);//ä¸Šä¸€ä¸ªæœˆçš„å¤©æ•°ï¼ï¼ï¼  
 	}
 	return tmp;
 }
