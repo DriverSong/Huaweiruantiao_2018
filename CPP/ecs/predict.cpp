@@ -1,41 +1,35 @@
 #include "predict.h"
 #include "distribution.h"
+#include "prediction.h"
 
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <map>
+#include <vector>
 
-// #define MAX_FLAVOR 15
 #define MAX_PERIOD 30
-// #define MAX_PHY 10
 #include "Date.h"
 
-//ÄãÒªÍê³ÉµÄ¹¦ÄÜ×ÜÈë¿Ú
+//ä½ è¦å®Œæˆçš„åŠŸèƒ½æ€»å…¥å£
 void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int data_num, char * filename)
 {
-	// ĞèÒªÊä³öµÄÄÚÈİ
-	// char * result_file = (char *)"17\n\n0 8 0 20";
 
-	std::stringstream ss;						// ×Ö·û´®Á÷
-	std::ofstream ofs;							// Êä³öÎÄ¼şÁ÷
-	std::string serial, flaName, time, target;	// ĞéÄâ»úID£¬ĞéÄâ»ú¹æ¸ñ£¬´´½¨Ê±¼ä£¬ÓÅ»¯×ÊÔ´Î¬¶ÈÃû
-	Date date, dateFirst, dateLast,				// ÁÙÊ±ÈÕÆÚ±äÁ¿£¬dataÖĞ×îÔçÈÕÆÚ£¬dataÖĞ×îÍíÈÕÆÚ
-		dateBegin, dateEnd;						// ×îÔçÓĞÓÃÈÕÆÚ£¬Ò»´ÎÑ­»·ÖĞ×îÍíÈÕÆÚ
-	int sumCPU, sumMEM, sumHD,					// ÎïÀí·şÎñÆ÷CPUºËÊı£¬ÄÚ´æ´óĞ¡£¨GB£©£¬Ó²ÅÌ´óĞ¡£¨GB£©
-		dateSpanTrain, dateSpanSum,				// ÑµÁ·Ê±¼ä¿ç¶È£¬×ÜÊ±¼ä¿ç¶È
-		numFla, numPeriod, indxPeriod,			// FlavorÊı£¬ÖÜÆÚÊı£¬ÖÜÆÚĞòºÅ
-		vCPU, vMEM, numPHY,numFlaValid;			// CPUºËÊı£¬ÄÚ´æ´óĞ¡£¨MB£©£¬ÎïÀí·şÎñÆ÷ÊıÄ¿,ÓĞĞ§FlavorÊı
+	std::stringstream ss;						// å­—ç¬¦ä¸²æµ
+	std::string serial, flaName, time, target;	// è™šæ‹ŸæœºIDï¼Œè™šæ‹Ÿæœºè§„æ ¼ï¼Œåˆ›å»ºæ—¶é—´ï¼Œä¼˜åŒ–èµ„æºç»´åº¦å
+	std::string str, strResult;					// ä¸´æ—¶strï¼Œç»“æœå­—ç¬¦ä¸²
+	Date date, dateFirst, dateLast;				// å½“å‰æ—¥æœŸï¼Œdataä¸­æœ€æ—©æ—¥æœŸï¼Œdataä¸­æœ€æ™šæ—¥æœŸ
+	int sumCPU, sumMEM, sumHD,					// ç‰©ç†æœåŠ¡å™¨CPUæ ¸æ•°ï¼Œå†…å­˜å¤§å°ï¼ˆGBï¼‰ï¼Œç¡¬ç›˜å¤§å°ï¼ˆGBï¼‰
+		numFla, period, sumDate, indxDate,		// Flavoræ•°ï¼Œå‘¨æœŸé•¿åº¦ï¼Œæ€»æ—¥æœŸæ•°ï¼Œæ—¥æœŸåºå·
+		vCPU, vMEM, numPHY, numFlaValid;		// CPUæ ¸æ•°ï¼Œå†…å­˜å¤§å°ï¼ˆMBï¼‰ï¼Œç‰©ç†æœåŠ¡å™¨æ•°ç›®,æœ‰æ•ˆFlavoræ•°
 
-	std::map<std::string, int> mapFlaIndx;		// FlavorÃûmap
-	std::string vecFlaName[MAX_FLAVOR];
-	int vecFlaCPU[MAX_FLAVOR];
-	int vecFlaMEM[MAX_FLAVOR];
-	int vecFlaPre[MAX_FLAVOR];
-	int vecData[MAX_FLAVOR][MAX_PERIOD];
-	int res[MAX_PHY][MAX_FLAVOR];
+	std::map<std::string, int> mapFlaIndx;		// Flavoråmap
+	std::string arrFlaName[MAX_FLAVOR];			// Flavoråæ•°ç»„
+	int arrFlaCPU[MAX_FLAVOR];					// å„Flavorå¯¹åº”CPUæ ¸æ•°æ•°ç»„
+	int arrFlaMEM[MAX_FLAVOR];					// å„Flavorå¯¹åº”å†…å­˜æ•°ç»„
+	int arrFlaPre[MAX_FLAVOR];					// å„Flavoré¢„æµ‹ç»“æœ
+	int res[MAX_PHY][MAX_FLAVOR];				// åˆ†é…ç»“æœæ•°ç»„
 
-	// ¶ÁÈ¡info
+	// è¯»å–info
 	ss << info[0];
 	ss >> sumCPU >> sumMEM >> sumHD;
 	ss << info[2];
@@ -44,102 +38,90 @@ void predict_server(char * info[MAX_INFO_NUM], char * data[MAX_DATA_NUM], int da
 	{
 		ss << info[i + 3];
 		ss >> flaName >> vCPU >> vMEM;
-		vecFlaName[i] = flaName;
-		vecFlaCPU[i] = vCPU;
-		vecFlaMEM[i] = vMEM / 1024;
+		arrFlaName[i] = flaName;
+		arrFlaCPU[i] = vCPU;
+		arrFlaMEM[i] = vMEM / 1024;
 		mapFlaIndx.insert(std::make_pair(flaName, i));
 	}
 	ss << info[4 + numFla];
 	ss >> target;
 	ss << info[6 + numFla];
-	ss >> dateBegin >> time;
+	ss >> dateFirst >> time;
 	ss << info[7 + numFla];
-	ss >> dateEnd >> time;
+	ss >> dateLast >> time;
 	ss.clear();
-	dateSpanTrain = dateEnd - dateBegin;
+	period = dateLast - dateFirst;
 
-	// ¸÷flavorÃ¿ÖÜÊıÄ¿¶şÎ¬Êı×é³õÊ¼»¯	
-	for (int i = 0; i < MAX_FLAVOR; i++)
-	{
-		for (int j = 0; j < MAX_PERIOD; j++)
-			vecData[i][j] = 0;
-	}
-
-	// ·ÖÎödataÖĞµÄÈÕÆÚ
+	// åˆ†ædataä¸­çš„æ—¥æœŸ
 	ss << data[0];
 	ss >> serial >> flaName >> dateFirst >> time;
 	ss << data[data_num - 1];
 	ss >> serial >> flaName >> dateLast >> time;
 	ss.clear();
-	dateSpanSum = dateLast - dateFirst + 1;
-	dateBegin = dateFirst + dateSpanSum%dateSpanTrain;
-	dateEnd = dateBegin + dateSpanTrain;
+	sumDate = dateLast - dateFirst + 1;
 
-	// Í³¼Æ¸÷flavorÃ¿ÖÜÊıÄ¿
-	indxPeriod = 0;
+	// vecDataåˆå§‹åŒ–
+	std::vector<std::vector<double>> vecData(numFla, std::vector<double>(sumDate, 0));
+
+	// ç»Ÿè®¡å„flavoræ¯å‘¨æ•°ç›®
+	indxDate = 0;
 	for (int i = 0; i < data_num; i++)
 	{
 		ss << data[i];
 		ss >> serial >> flaName >> date >> time;
-		if (date < dateBegin || mapFlaIndx.find(flaName) == mapFlaIndx.end())
+		if (mapFlaIndx.find(flaName) == mapFlaIndx.end())
 			continue;
-		while (date >= dateEnd)
-		{
-			indxPeriod++;
-			dateEnd += dateSpanTrain;
-		}
-		vecData[mapFlaIndx[flaName]][indxPeriod]++;
+		indxDate = date - dateFirst;
+		vecData[mapFlaIndx[flaName]][indxDate]++;
 	}
 	ss.clear();
-	numPeriod = indxPeriod + 1;
 
-	// fstreamÊä³öflavorÍ³¼Æ±í
-	ofs.open("vecFlavor.txt");
-	for (int i = 0; i < numFla; i++)
-	{
-		ofs << vecFlaName[i] << ':' << '\t';
-		for (int j = 0; j < numPeriod; j++)
-			ofs << vecData[i][j] << '\t';
-		ofs << std::endl;
-	}
-	ofs.close();
+	// é¢„æµ‹
+	PredictAll(vecData, period, numFla, arrFlaPre);
 
-	// Ô¤²â
-	for (int i = 0; i < numFla; i++)
-		vecFlaPre[i] = vecData[i][numPeriod - 1];
-	
-	// ¼ÆËãÓĞĞ§FlavorÊı
+	// è®¡ç®—æœ‰æ•ˆFlavoræ•°
 	numFlaValid = 0;
 	for (int i = 0; i < numFla; i++)
-		if (vecFlaPre[i] != 0)
-			numFlaValid++;
+		numFlaValid += arrFlaPre[i];
 
-	// ·ÖÅä
+	// åˆ†é…
 	for (int i = 0; i < MAX_PHY; i++)
 		for (int j = 0; j < numFla; j++)
 			res[i][j] = 0;
-	numPHY = distribution(sumCPU, sumMEM, numFla, target, vecFlaCPU, vecFlaMEM, vecFlaPre, res);
+	numPHY = distribution(sumCPU, sumMEM, numFla, target, arrFlaCPU, arrFlaMEM, arrFlaPre, res);
 
-	// Êä³ö½á¹û
-	ofs.open(filename);
-	ofs << numFlaValid << std::endl;
+	// ç”Ÿæˆç»“æœå­—ç¬¦ä¸²
+	strResult += std::to_string(numFlaValid);
+	strResult += '\n';
 	for (int i = 0; i < numFla; i++)
-		if (vecFlaPre[i] != 0)
-			ofs << vecFlaName[i] << " " << vecFlaPre[i] << std::endl;
-	ofs << std::endl;
-	ofs << numPHY << std::endl;
+	{
+		strResult += arrFlaName[i];
+		strResult += ' ';
+		strResult += std::to_string(arrFlaPre[i]);
+		strResult += '\n';
+	}
+	strResult += '\n';
+	strResult += std::to_string(numPHY);
+	strResult += '\n';
 	for (int i = 0; i < numPHY; i++)
 	{
-		ofs << i + 1 << " ";
+		strResult += std::to_string(i + 1);
 		for (int j = 0; j < numFla; j++)
 			if (res[i][j] != 0)
-				ofs << vecFlaName[j] << " " << res[i][j] << " ";
-		ofs << std::endl;
+			{
+				strResult += ' ';
+				strResult += arrFlaName[j];
+				strResult += ' ';
+				strResult += std::to_string(res[i][j]);
+			}
+		strResult += '\n';
 	}
 
+	//// éœ€è¦è¾“å‡ºçš„å†…å®¹
+	//char * result_file = (char *)"17\n\n0 8 0 20";
 
-	// Ö±½Óµ÷ÓÃÊä³öÎÄ¼şµÄ·½·¨Êä³öµ½Ö¸¶¨ÎÄ¼şÖĞ(psÇë×¢Òâ¸ñÊ½µÄÕıÈ·ĞÔ£¬Èç¹ûÓĞ½â£¬µÚÒ»ĞĞÖ»ÓĞÒ»¸öÊı¾İ£»µÚ¶şĞĞÎª¿Õ£»µÚÈıĞĞ¿ªÊ¼²ÅÊÇ¾ßÌåµÄÊı¾İ£¬Êı¾İÖ®¼äÓÃÒ»¸ö¿Õ¸ñ·Ö¸ô¿ª)
-	//write_result(strResult.c_str(), filename);
+	// ç›´æ¥è°ƒç”¨è¾“å‡ºæ–‡ä»¶çš„æ–¹æ³•è¾“å‡ºåˆ°æŒ‡å®šæ–‡ä»¶ä¸­(psè¯·æ³¨æ„æ ¼å¼çš„æ­£ç¡®æ€§ï¼Œå¦‚æœæœ‰è§£ï¼Œç¬¬ä¸€è¡Œåªæœ‰ä¸€ä¸ªæ•°æ®ï¼›ç¬¬äºŒè¡Œä¸ºç©ºï¼›ç¬¬ä¸‰è¡Œå¼€å§‹æ‰æ˜¯å…·ä½“çš„æ•°æ®ï¼Œæ•°æ®ä¹‹é—´ç”¨ä¸€ä¸ªç©ºæ ¼åˆ†éš”å¼€)
+	write_result(strResult.c_str(), filename);
 
 	return;
 }
