@@ -3,7 +3,7 @@
 void PredictAll(std::vector<std::vector<double> >& AlldataArray, int period, int numFla, int* predict)
 {
 	// std::vector<int> respredict;
-	for (int n = 0; n < 15; n++)
+	for (int n = 0; n < numFla; n++)
 	{
 		int weekPredict = 0.0;
 		//dataArray:单组虚拟机训练数据
