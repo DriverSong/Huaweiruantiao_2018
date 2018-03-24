@@ -6,11 +6,11 @@
 class Date
 {
 public:
-	Date(int year = 1900, int month = 1, int day = 1)//¹¹Ôìº¯Êý  
+	Date(int year = 1900, int month = 1, int day = 1)//æž„é€ å‡½æ•°  
 		:_year(year)
 		, _month(month)
 		, _day(day)
-	{    //²ÎÊý¼ì²â  
+	{    //å‚æ•°æ£€æµ‹  
 		if ((year >= 1900)
 			&& (month >= 1 && month <= 12)
 			&& (day >= 1 && day <= _GetMonthDay(year, month)))
@@ -21,25 +21,25 @@ public:
 		}
 		else
 		{
-			std::cout << "·Ç·¨ÈÕÆÚ" << std::endl;
+			std::cout << "éžæ³•æ—¥æœŸ" << std::endl;
 			_year = 1900;
 			_month = 1;
 			_day = 1;
 		}
 	}
-	//¹¹Ôìº¯Êý        
-	Date(const Date& d)   //¿½±´¹¹Ôì  
+	//æž„é€ å‡½æ•°        
+	Date(const Date& d)   //æ‹·è´æž„é€   
 	{
 		_year = d._year;
 		_month = d._month;
 		_day = d._day;
 	}
 
-	~Date() {}	//Îö¹¹º¯Êý
+	~Date() {}	//æžæž„å‡½æ•°
 
-	////²Ù×÷·ûÖØÔØ  
+	////æ“ä½œç¬¦é‡è½½  
 
-	Date& operator=(const Date& d);	//¸³Öµ=  
+	Date& operator=(const Date& d);	//èµ‹å€¼=  
 
 	bool operator==(const Date& d);	// ==  
 
@@ -61,23 +61,23 @@ public:
 
 	Date& operator-=(int days);		//-=  
 
-	Date& operator++();				// Ç°ÖÃ++  
+	Date& operator++();				// å‰ç½®++  
 
-	Date operator++(int);			// ºóÖÃ++  
+	Date operator++(int);			// åŽç½®++  
 
-	Date& operator--();				// Ç°ÖÃ--  
+	Date& operator--();				// å‰ç½®--  
 
-	Date operator--(int);			// ºóÖÃ--	
+	Date operator--(int);			// åŽç½®--	
 
 	int operator-(const Date& d);
 
-	bool IsLeap();					// ÅÐ¶ÏÈòÄê
+	bool IsLeap();					// åˆ¤æ–­é—°å¹´
 
-	int _GetMonthDay(int year, int month);  // Ä³ÔÂÌìÊý
+	int _GetMonthDay(int year, int month);  // æŸæœˆå¤©æ•°
 
-	friend std::ostream& operator<<(std::ostream& os, const Date& d);	// Êä³ö  
+	friend std::ostream& operator<<(std::ostream& os, const Date& d);	// è¾“å‡º  
 
-	friend std::istream& operator>>(std::istream& is, Date& d);			// ÊäÈë  
+	friend std::istream& operator>>(std::istream& is, Date& d);			// è¾“å…¥  
 
 private:
 	int _year;

@@ -1,5 +1,5 @@
 /*
-* Brief:	Ê÷½ÚµãÀàÍ·ÎÄ¼ş
+* Brief:	æ ‘èŠ‚ç‚¹ç±»å¤´æ–‡ä»¶
 * Author:	SherlockHsu
 * Date:		2018-03-22
 */
@@ -9,12 +9,12 @@
 
 struct TreeNode
 {
-	int _num;							// ÊıÁ¿
-	int _value;							// ¼ÛÖµÁ¿
-	int _layer;							// ²ãÊı
-	TreeNode* _parent;					//¸¸½Úµã
-	std::list<TreeNode*> _children;		//×Ó½Úµã
-	TreeNode(int, int, int, TreeNode*);	//¹¹Ôìº¯Êı
-	void SetParent(TreeNode*);			//ÉèÖÃ¸¸½Úµã
-	void InsertChildren(TreeNode*);		//²åÈë×Ó½Úµã
+	int _num;							// æ•°é‡
+	int _value;							// ä»·å€¼é‡
+	int _layer;							// å±‚æ•°
+	TreeNode* _parent;					//çˆ¶èŠ‚ç‚¹
+	std::list<TreeNode*> _children;		//å­èŠ‚ç‚¹
+	TreeNode(int, int, int, TreeNode*);	//æ„é€ å‡½æ•°
+	void SetParent(TreeNode*);			//è®¾ç½®çˆ¶èŠ‚ç‚¹
+	void InsertChildren(TreeNode*);		//æ’å…¥å­èŠ‚ç‚¹
 };

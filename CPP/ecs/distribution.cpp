@@ -1,5 +1,5 @@
 /*
-* Brief:	·ÖÅäº¯ÊıÔ´ÎÄ¼ş
+* Brief:	åˆ†é…å‡½æ•°æºæ–‡ä»¶
 * Author:	SherlockHsu
 * Date:		2018-03-22
 */
@@ -11,7 +11,7 @@
 
 int distribution(int sumCPU, int sumMEM, int numFla, std::string target, int* vecFlaCPU, int* vecFlaMEM, int* vecFlaPre, int res[MAX_PHY][MAX_FLAVOR])
 {
-	// ÅĞ¶Ïvalue
+	// åˆ¤æ–­value
 	int *V1, *V2, *W, *W_CPU, *W_MEM;
 	int C, numPHY;
 	int vecFla[MAX_FLAVOR];
@@ -27,9 +27,9 @@ int distribution(int sumCPU, int sumMEM, int numFla, std::string target, int* ve
 		V1 = vecFlaMEM;
 		V2 = vecFlaCPU;
 	}
-	// ¸ù¾İÎïÀí·şÎñÆ÷×ÊÔ´Ñ¡Ôñ±³°üËã·¨
+	// æ ¹æ®ç‰©ç†æœåŠ¡å™¨èµ„æºé€‰æ‹©èƒŒåŒ…ç®—æ³•
 	numPHY = 0;
-	// Ò»Î¬·ÑÓÃµÄ¶àÖØ±³°ü
+	// ä¸€ç»´è´¹ç”¨çš„å¤šé‡èƒŒåŒ…
 	if (sumCPU * 4 <= sumMEM || sumCPU >= sumMEM)
 	{
 		if (sumCPU * 4 <= sumMEM)
@@ -53,7 +53,7 @@ int distribution(int sumCPU, int sumMEM, int numFla, std::string target, int* ve
 			res[numPHY][i] = vecFla[i];
 
 	}
-	// ¶şÎ¬·ÑÓÃµÄ¶àÖØ±³°ü
+	// äºŒç»´è´¹ç”¨çš„å¤šé‡èƒŒåŒ…
 	else
 	{
 		W_CPU = vecFlaCPU;

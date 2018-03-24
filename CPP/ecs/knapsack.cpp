@@ -1,5 +1,5 @@
 /*
-* Brief:	ÈıÀà±³°üº¯ÊıÔ´ÎÄ¼ş
+* Brief:	ä¸‰ç±»èƒŒåŒ…å‡½æ•°æºæ–‡ä»¶
 * Author:	SherlockHsu
 * Date:		2018-03-22
 */
@@ -93,7 +93,7 @@ int knapsack_limitnum(int *W, int *V, int *N, int *res, int n, int C)
 int knapsack_limitnum2W(int *W1, int* W2, int *V, int *N, int *res, int n, int C1, int C2)
 {
 	int value = 0;
-	// ¶¨Òå¼ÛÖµ¾ØÕó
+	// å®šä¹‰ä»·å€¼çŸ©é˜µ
 	int ***f = new int**[n];
 	for (int i = 0; i < n; i++)
 	{
@@ -101,19 +101,19 @@ int knapsack_limitnum2W(int *W1, int* W2, int *V, int *N, int *res, int n, int C
 		for (int j = 0; j < C1 + 1; j++)
 			f[i][j] = new int[C2 + 1];
 	}
-	// ¼ÛÖµ¾ØÕóÖÃÁã
+	// ä»·å€¼çŸ©é˜µç½®é›¶
 	for (int i = 0; i < n; i++)
 		for (int j = 0; j < C1 + 1; j++)
 			for (int k = 0; k < C2 + 1; k++)
 				f[i][j][k] = 0;
-	// ¼ÛÖµ¾ØÕóµ×²ã³õÊ¼»¯
+	// ä»·å€¼çŸ©é˜µåº•å±‚åˆå§‹åŒ–
 	for (int i = 1; i < C1 + 1; i++)
 		for (int j = 1; j < C2 + 1; j++)
 		{
 			int count = min3D(N[0], i / W1[0], j / W2[0]);
 			f[0][i][j] = count * V[0];
 		}
-	// ¼ÆËã¼ÛÖµ¾ØÕó
+	// è®¡ç®—ä»·å€¼çŸ©é˜µ
 	for (int i = 1; i < n; i++)
 	{
 		for (int j = 1; j < C1 + 1; j++)
@@ -136,7 +136,7 @@ int knapsack_limitnum2W(int *W1, int* W2, int *V, int *N, int *res, int n, int C
 				}
 			}
 	}
-	// ¼ÆËã»ñµÃ×î¸ß¼ÛÖµµÄÂ·¾¶
+	// è®¡ç®—è·å¾—æœ€é«˜ä»·å€¼çš„è·¯å¾„
 	value = f[n - 1][C1][C2];
 	int i = n - 1;
 	int j = C1;
@@ -174,7 +174,7 @@ int knapsack_limitnum2W(int *W1, int* W2, int *V, int *N, int *res, int n, int C
 int knapsack_limitnum2W2V(int *W1, int* W2, int *V1, int* V2, int *N, int *res, int n, int C1, int C2)
 {
 	int value1 = 0;
-	// ¶¨Òå¼ÛÖµ¾ØÕó
+	// å®šä¹‰ä»·å€¼çŸ©é˜µ
 	int ***f = new int**[n];
 	for (int i = 0; i < n; i++)
 	{
@@ -182,7 +182,7 @@ int knapsack_limitnum2W2V(int *W1, int* W2, int *V1, int* V2, int *N, int *res, 
 		for (int j = 0; j < C1 + 1; j++)
 			f[i][j] = new int[C2 + 1];
 	}
-	// ¼ÛÖµ¾ØÕóÖÃÁã
+	// ä»·å€¼çŸ©é˜µç½®é›¶
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < C1 + 1; j++)
@@ -190,14 +190,14 @@ int knapsack_limitnum2W2V(int *W1, int* W2, int *V1, int* V2, int *N, int *res, 
 				f[i][j][k] = 0;
 	}
 
-	// ¼ÛÖµ¾ØÕóµ×²ã³õÊ¼»¯
+	// ä»·å€¼çŸ©é˜µåº•å±‚åˆå§‹åŒ–
 	for (int i = 1; i < C1 + 1; i++)
 		for (int j = 1; j < C2 + 1; j++)
 		{
 			int count = min3D(N[0], i / W1[0], j / W2[0]);
 			f[0][i][j] = count * V1[0];
 		}
-	// ¼ÆËã¼ÛÖµ¾ØÕó
+	// è®¡ç®—ä»·å€¼çŸ©é˜µ
 	for (int i = 1; i < n; i++)
 	{
 		for (int j = 1; j < C1 + 1; j++)
@@ -221,7 +221,7 @@ int knapsack_limitnum2W2V(int *W1, int* W2, int *V1, int* V2, int *N, int *res, 
 			}
 	}
 
-	// ¼ÆËã»ñµÃ×î¸ß¼ÛÖµµÄÂ·¾¶
+	// è®¡ç®—è·å¾—æœ€é«˜ä»·å€¼çš„è·¯å¾„
 	value1 = f[n - 1][C1][C2];
 	int i = n - 1;
 	int j = C1;
@@ -258,11 +258,11 @@ int knapsack_limitnum2W2V(int *W1, int* W2, int *V1, int* V2, int *N, int *res, 
 
 void buildTree(std::list<TreeNode*>* listT, TreeNode * parent, int i, int j, int k, int * W1, int * W2, int *V1, int* V2, int *N, int *** f)
 {
-	// ÅĞ¶ÏÊÇ·ñµ½´ïÒ¶×Ó½Úµã
+	// åˆ¤æ–­æ˜¯å¦åˆ°è¾¾å¶å­èŠ‚ç‚¹
 	if (i > 0)
 	{
 		int count = min3D(N[i], j / W1[i], k / W2[i]);
-		bool exist = false;	// ÅĞ¶Ï½ÚµãÊÇ·ñ´æÔÚ
+		bool exist = false;	// åˆ¤æ–­èŠ‚ç‚¹æ˜¯å¦å­˜åœ¨
 		for (int c = count; c > 0; c--)
 		{
 			if (f[i][j][k] == (f[i - 1][j - W1[i] * c][k - W2[i] * c] + c*V1[i]))
@@ -293,7 +293,7 @@ void buildTree(std::list<TreeNode*>* listT, TreeNode * parent, int i, int j, int
 			tn = parent;
 			value = parent->_value;
 		}
-		// ÅĞ¶ÏÒ¶×Ó½ÚµãµÄvalueÊÇ·ñ´óÓÚµ±Ç°×î´óÖµ
+		// åˆ¤æ–­å¶å­èŠ‚ç‚¹çš„valueæ˜¯å¦å¤§äºå½“å‰æœ€å¤§å€¼
 		if (value > max_value)
 		{
 			max_value = value;
